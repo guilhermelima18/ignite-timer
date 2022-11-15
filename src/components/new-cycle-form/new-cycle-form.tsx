@@ -34,7 +34,7 @@ export const NewCycleForm = () => {
         placeholder="00"
         {...register("minutesAmount", { valueAsNumber: true })}
         step={5}
-        min={1}
+        min={0}
         max={60}
         disabled={!!activeCycle}
       />

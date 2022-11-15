@@ -4,9 +4,11 @@ import {
   ReactNode,
   SetStateAction,
   useContext,
+  useReducer,
   useState,
 } from "react";
 import { Cycle } from "../@types/cycle";
+import { cyclesReducer } from "../reducers/cycles/reducer";
 
 type CyclesProviderProps = {
   children: ReactNode;
@@ -19,19 +21,25 @@ type CyclesContextProps = {
   minutes: string;
   seconds: string;
   totalSeconds: number;
-  setCycles: Dispatch<SetStateAction<Cycle[]>>;
-  setActiveCycleId: Dispatch<SetStateAction<string | null>>;
+  dispatch: any;
   setAmountSecondsPassed: Dispatch<SetStateAction<number>>;
 };
 
 const CyclesContext = createContext({} as CyclesContextProps);
 
 export function CyclesProvider({ children }: CyclesProviderProps) {
-  const [cycles, setCycles] = useState<Cycle[]>([]);
-  const [activeCycleId, setActiveCycleId] = useState<string | null>(null);
+  const [cyclesState, dispatch] = useReducer(cyclesReducer, {
+    cycles: [],
+    activeCycleId: null,
+  });
+
   const [amountSecondsPassed, setAmountSecondsPassed] = useState(0);
 
-  const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId);
+  const { cycles, activeCycleId } = cyclesState;
+
+  const activeCycle = cyclesState.cycles.find(
+    (cycle) => cycle.id === cyclesState.activeCycleId
+  );
 
   const totalSeconds = activeCycle ? activeCycle.minutesAmount * 60 : 0;
   const currentSeconds = activeCycle ? totalSeconds - amountSecondsPassed : 0;
@@ -51,8 +59,7 @@ export function CyclesProvider({ children }: CyclesProviderProps) {
         minutes,
         seconds,
         totalSeconds,
-        setCycles,
-        setActiveCycleId,
+        dispatch,
         setAmountSecondsPassed,
       }}
     >

@@ -12,10 +12,13 @@ import {
   StartCountdownButton,
   StopCountdownButton,
 } from "./home.styles";
+import {
+  addNewCycleAction,
+  interruptCycleAction,
+} from "../../reducers/cycles/action";
 
 export const Home = () => {
-  const { activeCycleId, activeCycle, setCycles, setActiveCycleId } =
-    useCycles();
+  const { activeCycleId, activeCycle, dispatch } = useCycles();
 
   const methods = useForm<CreateNewCycle>({
     resolver: zodResolver(newCycleFormValidationSchema),
@@ -36,27 +39,13 @@ export const Home = () => {
       startDate: new Date(),
     };
 
-    setCycles((oldState) => [...oldState, newCycle]);
-    setActiveCycleId(newCycle.id);
+    dispatch(addNewCycleAction(newCycle));
 
     methods.reset();
   };
 
   const handleInterruptCycle = () => {
-    setCycles((prevState) =>
-      prevState.map((cycle) => {
-        if (cycle.id === activeCycleId) {
-          return {
-            ...cycle,
-            interruptedDate: new Date(),
-          };
-        } else {
-          return cycle;
-        }
-      })
-    );
-
-    setActiveCycleId(null);
+    dispatch(interruptCycleAction());
   };
 
   return (

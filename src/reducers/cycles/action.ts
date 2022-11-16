@@ -20,3 +20,9 @@ export function interruptCycleAction() {
     type: ActionTypes.INTERRUPT_CURRENT_CYCLE,
   };
 }
+
+export function finishedCycleAction() {
+  return {
+    type: ActionTypes.MARK_CURRENT_CYCLE_AS_FINISHED,
+  };
+}

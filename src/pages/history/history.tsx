@@ -1,12 +1,11 @@
 import { formatDistanceToNow } from "date-fns";
 import ptBR from "date-fns/locale/pt-BR";
 import { useCycles } from "../../contexts/cycles-context";
-import { formatDate } from "../../utils/formatDate";
 import { HistoryContainer, HistoryList, Status } from "./history.styles";
 
 interface StatusComponentProps {
-  finishedDate?: string;
-  interruptedDate?: string;
+  finishedDate?: Date;
+  interruptedDate?: Date;
 }
 
 const StatusComponent = ({
@@ -43,18 +42,19 @@ export const History = () => {
           </thead>
           <tbody>
             {cycles.map((cycle) => {
-              const startDateFormatted = formatDistanceToNow(cycle.startDate, {
-                addSuffix: true,
-                locale: ptBR,
-              });
+              const startDateFormatted = formatDistanceToNow(
+                new Date(cycle.startDate),
+                {
+                  addSuffix: true,
+                  locale: ptBR,
+                }
+              );
 
               const interruptedDateFormatted =
-                cycle.interruptedDate &&
-                formatDate(cycle.interruptedDate.toISOString());
+                cycle.interruptedDate && cycle.interruptedDate;
 
               const finishedDateFormatted =
-                cycle.finishedDate &&
-                formatDate(cycle.finishedDate.toISOString());
+                cycle.finishedDate && cycle.finishedDate;
 
               return (
                 <tr key={cycle.id}>

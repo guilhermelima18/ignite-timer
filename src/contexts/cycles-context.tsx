@@ -4,6 +4,7 @@ import {
   ReactNode,
   SetStateAction,
   useContext,
+  useEffect,
   useReducer,
   useState,
 } from "react";
@@ -28,10 +29,25 @@ type CyclesContextProps = {
 const CyclesContext = createContext({} as CyclesContextProps);
 
 export function CyclesProvider({ children }: CyclesProviderProps) {
-  const [cyclesState, dispatch] = useReducer(cyclesReducer, {
-    cycles: [],
-    activeCycleId: null,
-  });
+  const [cyclesState, dispatch] = useReducer(
+    cyclesReducer,
+    {
+      cycles: [],
+      activeCycleId: null,
+    },
+    () => {
+      const storage = localStorage.getItem("@ignite-timer:cycles-1.0.0");
+
+      if (storage) {
+        return JSON.parse(storage);
+      }
+
+      return {
+        cycles: [],
+        activeCycleId: null,
+      };
+    }
+  );
 
   const [amountSecondsPassed, setAmountSecondsPassed] = useState(0);
 
@@ -49,6 +65,12 @@ export function CyclesProvider({ children }: CyclesProviderProps) {
 
   const minutes = String(minutesAmount).padStart(2, "0");
   const seconds = String(secondsAmount).padStart(2, "0");
+
+  useEffect(() => {
+    const JSONStorage = JSON.stringify(cyclesState);
+
+    localStorage.setItem("@ignite-timer:cycles-1.0.0", JSONStorage);
+  }, [cyclesState]);
 
   return (
     <CyclesContext.Provider

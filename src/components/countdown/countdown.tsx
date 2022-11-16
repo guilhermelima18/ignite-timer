@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { differenceInSeconds } from "date-fns";
 import { useCycles } from "../../contexts/cycles-context";
 import { CountdownContainer, Separator } from "./countdown.styles";
+import { finishedCycleAction } from "../../reducers/cycles/action";
 
 export const Countdown = () => {
   const {
@@ -10,7 +11,7 @@ export const Countdown = () => {
     totalSeconds,
     minutes,
     seconds,
-    setCycles,
+    dispatch,
     setAmountSecondsPassed,
   } = useCycles();
 
@@ -21,22 +22,11 @@ export const Countdown = () => {
       interval = setInterval(() => {
         const secondsDifference = differenceInSeconds(
           new Date(),
-          activeCycle.startDate
+          new Date(activeCycle.startDate)
         );
 
         if (secondsDifference >= totalSeconds) {
-          setCycles((prevState) =>
-            prevState.map((cycle) => {
-              if (cycle.id === activeCycleId) {
-                return {
-                  ...cycle,
-                  fineshedDate: new Date(),
-                };
-              } else {
-                return cycle;
-              }
-            })
-          );
+          dispatch(finishedCycleAction());
 
           setAmountSecondsPassed(totalSeconds);
 
